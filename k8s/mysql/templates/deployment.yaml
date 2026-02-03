@@ -35,6 +35,15 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"
+            - name: MYSQL_DATABASE
+              value: "kws"
+          volumeMounts:
+            - name: mysql-config-volume
+              mountPath: /etc/mysql/conf.d/my.cnf
+              subPath: my.cnf
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
