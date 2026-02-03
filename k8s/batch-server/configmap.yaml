@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "batch-server.fullname" . }}-config
+data:
+  # DB 기본 설정
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/kws?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&rewriteBatchedStatements=true"
+  SPRING_DATASOURCE_USERNAME: "root"
+  SPRING_DATASOURCE_PASSWORD: "root"
+  
+  # JPA/Hibernate 배치 설정 (1000개씩 묶어서 처리)
+  SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_BATCH_SIZE: "1000"
+  SPRING_JPA_PROPERTIES_HIBERNATE_ORDER_INSERTS: "true"
+  SPRING_JPA_PROPERTIES_HIBERNATE_ORDER_UPDATES: "true"
+  
+  # 형님 앱 전용 커스텀 배치 전략 설정
+  POINT_UPDATE_STRATEGY: "batch-jpa"
+  POINT_UPDATE_BATCH_SIZE: "1000"

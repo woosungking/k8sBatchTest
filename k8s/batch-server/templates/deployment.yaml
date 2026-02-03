@@ -21,5 +21,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "batch-server.fullname" . }}
+          env:
+            - name: JAVA_OPTS
+              value: "-Xms384m -Xmx512m -Dfile.encoding=UTF-8"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
