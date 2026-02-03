@@ -1,0 +1,38 @@
+
+replicaCount: 11
+
+image:
+  repository: kingmusung/batchtestapp
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+
+podAnnotations: {}
+
+podLabels: {}
+
+
+
+service:
+  type: ClusterIP
+  port: 8080
+
+
+resources:
+  limits:
+    cpu: "600m"     # 0.6코어 (파드당 엔진 출력을 높임)
+    memory: "640Mi" # 640MB (자바 힙을 더 넉넉히 줄 수 있음)
+  requests:
+    cpu: "300m"
+    memory: "384Mi"
+
