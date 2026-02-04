@@ -1,4 +1,4 @@
-package com.java.k8s.nobatch;
+package com.java.k8s.nobatch.update;
 
 import com.java.k8s.nobatch.dto.PointUpdateRequest;
 

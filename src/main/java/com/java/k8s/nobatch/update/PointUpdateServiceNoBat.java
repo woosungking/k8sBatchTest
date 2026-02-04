@@ -1,9 +1,9 @@
-package com.java.k8s.nobatch;
+package com.java.k8s.nobatch.update;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import com.java.k8s.nobatch.MemberRepository;
 import com.java.k8s.nobatch.dto.PointUpdateRequest;
 
 @ConditionalOnProperty(name="point.update.strategy", havingValue = "no-batch")

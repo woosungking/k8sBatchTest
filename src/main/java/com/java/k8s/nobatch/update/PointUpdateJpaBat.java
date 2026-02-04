@@ -1,4 +1,4 @@
-package com.java.k8s.nobatch;
+package com.java.k8s.nobatch.update;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,15 +7,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.java.k8s.nobatch.Member;
+import com.java.k8s.nobatch.MemberRepository;
 import com.java.k8s.nobatch.dto.PointUpdateRequest;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-
+@ComponentScan("")
 @ConditionalOnProperty(name = "point.update.strategy", havingValue = "batch-jpa")
 @Component
 public class PointUpdateJpaBat implements PointUpdateService{
