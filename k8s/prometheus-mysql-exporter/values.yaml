@@ -9,32 +9,45 @@ image:
   tag: ""
   pullPolicy: "IfNotPresent"
 
-## 3. 서비스 설정 (9104 포트 사용)
+## 3. 서비스 설정
 service:
+  labels: {}
+  annotations: {}
   name: mysql-exporter
   type: ClusterIP
   externalPort: 9104
   internalPort: 9104
 
-## 4. 서비스 모니터 활성화 (이게 핵심: 프로메테우스가 데이터를 긁어가게 함)
+## 4. 서비스 모니터 (에러 방지용 필수 필드 포함)
 serviceMonitor:
   enabled: true
+  apiVersion: "monitoring.coreos.com/v1"
   interval: 30s
   scrapeTimeout: 10s
   additionalLabels:
-    release: kube-prometheus-stack # 프로메테우스 스택 레이블과 맞춤
+    release: kube-prometheus-stack
+  # 아까 에러 났던 범인: 반드시 아래 구조가 있어야 함
+  multipleTarget:
+    enabled: false
+    targets: []
+    sharedSecret:
+      enabled: false
+      name: ""
 
-## 5. MySQL 접속 정보 (형님 계정 정보 적용)
+## 5. MySQL 접속 정보
 mysql:
-  host: "mysql.default.svc.cluster.local" # MySQL 서비스 주소
+  host: "mysql.default.svc.cluster.local"
   user: "exporter"
   pass: "password123"
   port: 3306
   db: ""
+  protocol: ""
+  additionalConfig: []
 
-## 6. 프로메테우스 룰 (선택 사항: DB 다운 시 알람)
+## 6. 프로메테우스 룰
 prometheusRule:
   enabled: true
+  additionalLabels: {}
   rules:
     - alert: MysqlDown
       expr: mysql_up == 0
@@ -50,6 +63,13 @@ replicaCount: 1
 imagePullSecrets: []
 serviceAccount:
   create: true
+  name: ""
+  annotations: {}
+
 nodeSelector: {}
 tolerations: []
 affinity: {}
+podLabels: {}
+securityContext: {}
+podSecurityContext: {}
+extraManifests: []
