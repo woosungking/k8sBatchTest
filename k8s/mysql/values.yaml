@@ -98,17 +98,16 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+# MySQL 파드가 뜰 때 유저를 생성하게 함
+volumes:
+  - name: init-scripts
+    configMap:
+      name: mysql-init-scripts
 
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+volumeMounts:
+  - name: init-scripts
+    mountPath: /docker-entrypoint-initdb.d/init-exporter.sql
+    subPath: init-exporter.sql
 
 nodeSelector: {}
 
