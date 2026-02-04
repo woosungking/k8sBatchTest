@@ -1,15 +1,15 @@
-## 1. 전역 설정
 namespaceOverride: ""
 fullnameOverride: ""
+replicaCount: 1
 
-## 2. 이미지 설정
 image:
   registry: quay.io
   repository: prometheus/mysqld-exporter
   tag: ""
   pullPolicy: "IfNotPresent"
 
-## 3. 서비스 설정
+imagePullSecrets: []
+
 service:
   labels: {}
   annotations: {}
@@ -18,7 +18,6 @@ service:
   externalPort: 9104
   internalPort: 9104
 
-## 4. 서비스 모니터 (에러 방지용 필수 필드 포함)
 serviceMonitor:
   enabled: true
   apiVersion: "monitoring.coreos.com/v1"
@@ -26,7 +25,11 @@ serviceMonitor:
   scrapeTimeout: 10s
   additionalLabels:
     release: kube-prometheus-stack
-  # 아까 에러 났던 범인: 반드시 아래 구조가 있어야 함
+  jobLabel: ""
+  targetLabels: []
+  podTargetLabels: []
+  metricRelabelings: []
+  relabelings: []
   multipleTarget:
     enabled: false
     targets: []
@@ -34,20 +37,68 @@ serviceMonitor:
       enabled: false
       name: ""
 
-## 5. MySQL 접속 정보
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+podLabels: {}
+priorityClassName: ""
+extraVolumeMounts: []
+extraVolumes: []
+extraEnvs: []
+podSecurityContext: {}
+securityContext: {}
+
+annotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/path: "/metrics"
+  prometheus.io/port: "9104"
+
+config:
+  extraArgs: []
+
+collectors: {}
+
 mysql:
+  db: ""
   host: "mysql.default.svc.cluster.local"
-  user: "exporter"
+  additionalConfig: []
   pass: "password123"
   port: 3306
-  db: ""
   protocol: ""
-  additionalConfig: []
+  user: "exporter"
+  existingConfigSecret:
+    name: ""
+    key: ""
+  existingPasswordSecret:
+    name: ""
+    key: ""
 
-## 6. 프로메테우스 룰
+cloudsqlproxy:
+  enabled: false
+  image:
+    repo: "gcr.io/cloud-sql-connectors/cloud-sql-proxy"
+    tag: "2.14.0"
+    pullPolicy: "IfNotPresent"
+  instanceConnectionName: ""
+  privateIp: false
+  port: "3306"
+  credentialsSecret: ""
+  credentials: ""
+  workloadIdentity:
+    enabled: false
+    serviceAccountEmail: ""
+  extraArgs: ""
+
 prometheusRule:
   enabled: true
   additionalLabels: {}
+  namespace: ""
   rules:
     - alert: MysqlDown
       expr: mysql_up == 0
@@ -58,18 +109,4 @@ prometheusRule:
         summary: "MySQL 서비스 중단"
         description: "MySQL 인스턴스가 응답하지 않습니다."
 
-## 7. 기타 기본 설정 유지
-replicaCount: 1
-imagePullSecrets: []
-serviceAccount:
-  create: true
-  name: ""
-  annotations: {}
-
-nodeSelector: {}
-tolerations: []
-affinity: {}
-podLabels: {}
-securityContext: {}
-podSecurityContext: {}
 extraManifests: []
