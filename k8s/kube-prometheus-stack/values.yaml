@@ -1313,7 +1313,7 @@ grafana:
 
   # Administrator credentials when not using an existing secret (see below)
   adminUser: admin
-  # adminPassword: strongpassword
+  adminPassword: 1111
 
   # Use an existing secret for the admin user.
   admin:
@@ -1498,6 +1498,7 @@ grafana:
   ##
   service:
     portName: http-web
+    type: NodePort
     ipFamilies: []
     ipFamilyPolicy: ""
 
@@ -3097,7 +3098,7 @@ prometheusOperator:
   ## Service type
   ## NodePort, ClusterIP, LoadBalancer
   ##
-    type: ClusterIP
+    type: NodePort
 
     ## List of IP addresses at which the Prometheus server service is available
     ## Ref: https://kubernetes.io/docs/concepts/services-networking/service/#external-ips
@@ -5060,7 +5061,7 @@ thanosRuler:
 
     ## Service type
     ##
-    type: ClusterIP
+    type: NodePort
 
   ## Configuration for creating a ServiceMonitor for the ThanosRuler service
   ##
