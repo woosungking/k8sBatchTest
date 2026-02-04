@@ -4680,7 +4680,7 @@ prometheus:
     # because control-plane managed by AWS cannot communicate with pods' IP CIDR and admission webhooks are not working
     # Use the host's network namespace if true. Make sure to understand the security implications if you want to enable it.
     # When hostNetwork is enabled, this will set dnsPolicy to ClusterFirstWithHostNet automatically.
-    hostNetwork: false
+    hostNetwork: true
 
     # HostAlias holds the mapping between IP and hostnames that will be injected
     # as an entry in the pod's hosts file.
