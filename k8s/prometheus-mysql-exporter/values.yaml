@@ -65,7 +65,7 @@ config:
 collectors: {}
 
 mysql:
-  db: ""
+  db: "kws"
   host: "mysql.default.svc.cluster.local"
   additionalConfig: []
   pass: "password123"

@@ -7,11 +7,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.java.k8s.nobatch.Member;
+import com.java.k8s.nobatch.entity.Member;
 import com.java.k8s.nobatch.MemberRepository;
 import com.java.k8s.nobatch.dto.PointUpdateRequest;
 
@@ -39,7 +38,7 @@ public class PointUpdateJpaBat implements PointUpdateService{
 		queue.offer(request);
 	}
 
-	@Scheduled(fixedDelay = 1000) // 너무 빠르면 로그 보기 힘드니까 일단 1초로
+	@Scheduled(fixedDelayString = "${point.update.batch.delay}")
 	@Transactional
 	public void processBatch(){
 		if(queue.isEmpty()) return;

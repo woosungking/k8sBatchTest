@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "mysql.labels" . | nindent 4 }}
 spec:
-  replicas: 1  # DB는 하나만 띄웁니다
+  replicas: 1
   selector:
     matchLabels:
       {{- include "mysql.selectorLabels" . | nindent 6 }}
@@ -24,15 +24,20 @@ spec:
               value: "kws"
           ports:
             - name: mysql
-              containerPort: 3306 # 포트는 무조건 3306입니다
+              containerPort: 3306
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            # 설정 파일 주입
             - name: mysql-config-volume
               mountPath: /etc/mysql/conf.d/my.cnf
               subPath: my.cnf
+            # 초기화 스크립트 주입 (MySQL 실행 시 자동 실행됨)
+            - name: mysql-config-volume
+              mountPath: /docker-entrypoint-initdb.d/init-exporter.sql
+              subPath: init-exporter.sql
       volumes:
         - name: mysql-config-volume
           configMap:
-            name: mysql-config # 아까 만든 컨피그맵 이름이랑 맞춰야 합니다
+            name: mysql-config

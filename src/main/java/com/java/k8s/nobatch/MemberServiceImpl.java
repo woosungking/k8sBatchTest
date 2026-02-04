@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.java.k8s.nobatch.dto.LoginRequest;
 import com.java.k8s.nobatch.dto.PointUpdateRequest;
+import com.java.k8s.nobatch.entity.Member;
 import com.java.k8s.nobatch.update.PointUpdateService;
 
 @Service

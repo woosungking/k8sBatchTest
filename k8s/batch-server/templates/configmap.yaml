@@ -16,3 +16,4 @@ data:
   # 형님 앱 전용 커스텀 배치 전략 설정
   POINT_UPDATE_STRATEGY: "batch-jpa"
   POINT_UPDATE_BATCH_SIZE: "1000"
+  POINT_UPDATE_BATCH_DELAY: "1000"

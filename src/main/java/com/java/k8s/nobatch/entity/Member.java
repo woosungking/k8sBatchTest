@@ -1,4 +1,4 @@
-package com.java.k8s.nobatch;
+package com.java.k8s.nobatch.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
