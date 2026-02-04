@@ -18,7 +18,7 @@ import com.java.k8s.nobatch.dto.PointUpdateRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-@ComponentScan("")
+//메인 함수에 필히 적으시오 @EnableScheduling
 @ConditionalOnProperty(name = "point.update.strategy", havingValue = "batch-jpa")
 @Component
 public class PointUpdateJpaBat implements PointUpdateService{
@@ -35,26 +35,31 @@ public class PointUpdateJpaBat implements PointUpdateService{
 
 	@Override
 	public void updateMemberPoint(PointUpdateRequest request) {
+		System.out.println("씨ㅏㅏㅏㅏ발");
 		queue.offer(request);
 	}
 
-	@Scheduled(fixedDelay = 100)
+	@Scheduled(fixedDelay = 1000) // 너무 빠르면 로그 보기 힘드니까 일단 1초로
 	@Transactional
 	public void processBatch(){
 		if(queue.isEmpty()) return;
+
+		System.out.println("로그: 배치 처리 시작! 현재 큐 사이즈: " + queue.size()); // 확인용
+
 		List<PointUpdateRequest> batchList = new ArrayList<>();
-		queue.drainTo(batchList,batchSize);
-		int count = 0;
+		queue.drainTo(batchList, batchSize);
+
 		for(PointUpdateRequest request : batchList){
-			Member member = memberRepository.findById(request.getUserId()).orElseThrow();
+			// 1. 여기서 데이터가 제대로 오는지 확인
+			System.out.println("로그: 유저 " + request.getUserId() + " 포인트 " + request.getPoint() + " 업데이트 시도");
+
+			Member member = memberRepository.findById(request.getUserId())
+				.orElseThrow(() -> new RuntimeException("유저 없음: " + request.getUserId()));
+
 			member.updatePoint(request.getPoint());
-			if(count > 0 && count % batchSize ==0){
-				em.flush();
-				em.clear();
-			}
-			count++;
 		}
 		em.flush();
 		em.clear();
+		System.out.println("로그: DB에 쿼리 날림 완료!");
 	}
 }

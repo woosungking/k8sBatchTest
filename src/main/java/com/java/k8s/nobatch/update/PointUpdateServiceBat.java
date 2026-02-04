@@ -18,39 +18,46 @@ import com.java.k8s.nobatch.dto.PointUpdateRequest;
 
 import jakarta.transaction.Transactional;
 
-@ConditionalOnProperty(name = "point.update.strayegy", havingValue = "batch-jdbc")
+// 1. strategy 오타 수정 (strayegy -> strategy)
+@ConditionalOnProperty(name = "point.update.strategy", havingValue = "batch-jdbc")
 @Component
-public class PointUpdateServiceBat implements PointUpdateService{
-	@Value("${point.update.batch.size}")
-	private int batchSize;
-	private final BlockingQueue<PointUpdateRequest> queue = new LinkedBlockingQueue<>(batchSize*10);
+public class PointUpdateServiceBat implements PointUpdateService {
+
+	private final int batchSize;
+	private final BlockingQueue<PointUpdateRequest> queue;
 	private final JdbcTemplate jdbcTemplate;
 
-	public PointUpdateServiceBat(JdbcTemplate jdbcTemplate) {
+	// 2. 생성자에서 큐 사이즈 안전하게 초기화
+	public PointUpdateServiceBat(JdbcTemplate jdbcTemplate, @Value("${point.update.batch.size}") int batchSize) {
 		this.jdbcTemplate = jdbcTemplate;
+		this.batchSize = batchSize;
+		this.queue = new LinkedBlockingQueue<>(batchSize * 10);
 	}
 
 	@Override
 	public void updateMemberPoint(PointUpdateRequest request) {
+		// 큐에 넣을 때 로그 확인 (필요시 주석 해제)
+		// System.out.println("JDBC 큐 인입: " + request.getUserId());
 		queue.offer(request);
 	}
 
 	@Scheduled(fixedDelay = 100)
 	@Transactional
-	public void processBatch(){
-		if(queue.isEmpty()) return;
-		List<PointUpdateRequest> batchList = new ArrayList<>();
-		queue.drainTo(batchList,batchSize);
-		jdbcTemplate.batchUpdate("UPDATE member SET point = point + ? WHERE id = ?",
-			new BatchPreparedStatementSetter(){
+	public void processBatch() {
+		if (queue.isEmpty()) return;
 
+		List<PointUpdateRequest> batchList = new ArrayList<>();
+		queue.drainTo(batchList, batchSize);
+
+		System.out.println("로그: JDBC 배치 처리 시작! 데이터 개수: " + batchList.size());
+
+		jdbcTemplate.batchUpdate("UPDATE member SET point = point + ? WHERE id = ?",
+			new BatchPreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
 					PointUpdateRequest request = batchList.get(i);
-					long userId = request.getUserId();
-					int point = request.getPoint();
-					ps.setLong(1, point);
-					ps.setLong(2, userId);
+					ps.setInt(1, request.getPoint()); // 포인트(int)
+					ps.setLong(2, request.getUserId()); // 유저ID(long)
 				}
 
 				@Override
@@ -58,6 +65,7 @@ public class PointUpdateServiceBat implements PointUpdateService{
 					return batchList.size();
 				}
 			});
-		}
-	}
 
+		System.out.println("로그: JDBC 배치 쿼리 실행 완료!");
+	}
+}

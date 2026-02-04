@@ -3,7 +3,7 @@ replicaCount: 1
 
 image:
   repository: kingmusung/batchtestapp
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: "latest"
 
 

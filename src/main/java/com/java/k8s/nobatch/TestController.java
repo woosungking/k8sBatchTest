@@ -2,6 +2,7 @@ package com.java.k8s.nobatch;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,7 +15,7 @@ import com.java.k8s.nobatch.dto.LoginRequest;
 import com.java.k8s.nobatch.dto.PointUpdateRequest;
 
 import jakarta.websocket.server.PathParam;
-
+@EnableScheduling
 @RestController
 @RequestMapping("api/v1/member")
 public class TestController {
