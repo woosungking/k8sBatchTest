@@ -3,6 +3,7 @@ package com.java.k8s.nobatch.update;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import com.java.k8s.global.BusinessException;
 import com.java.k8s.nobatch.MemberRepository;
 import com.java.k8s.nobatch.dto.PointUpdateRequest;
 
@@ -22,7 +23,6 @@ public class PointUpdateServiceNoBat implements PointUpdateService{
 				member.updatePoint(request.getPoint());
 			},
 			()->{
-				throw new RuntimeException("해당 유저는 존재하지 않습니다");
 			}
 		);
 	}

@@ -3,9 +3,9 @@ import { check, sleep } from 'k6';
 
 export let options = {
   stages: [
-    { duration: '10s', target: 1000 }, // 동시 접속자 1000명으로 점프
-    { duration: '1m', target: 1000 }, 
-    { duration: '10s', target: 0 },
+    { duration: '10s', target: 500 }, // 10초 동안 1000명까지 램프업
+    { duration: '1m', target: 500 },  // 1분 동안 1000명 유지
+    { duration: '10s', target: 0 },    // 10초 동안 0명으로 종료
   ],
 };
 
@@ -29,11 +29,30 @@ export default function () {
   const res = http.put(url, payload, params);
 
   // 3. 성공 여부 체크 (200 OK)
-  check(res, {
+  const isOk = check(res, {
     'is status 200': (r) => r.status === 200,
   });
 
-  // 짤짤이 연타 속도 조절 (0.1초 대기, 너무 빠르면 로컬 배치가 못 버틸 수 있음)
-  // 아예 극한의 성능을 보고 싶으면 아래 라인을 주석 처리하세요.
+  // 4. 실패 시 상세 사유 로컬 로깅 (파일 저장용)
+  if (!isOk) {
+    let errorMsg = '서버 응답 없음 (Network Error/Timeout)';
+    
+    try {
+      // 서버가 던진 RestApiResponse를 파싱하여 response 필드 추출
+      if (res.body) {
+        const body = JSON.parse(res.body);
+        errorMsg = body.response || '응답 메시지 누락';
+      }
+    } catch (e) {
+      // JSON 파싱이 안 되는 경우 (예: 깡통 502 Bad Gateway 등)
+      errorMsg = `Raw Error: ${res.status} - ${res.error || 'Unknown'}`;
+    }
 
+    // [시간] 상태코드 | 상세메시지 형태로 표준 에러(stderr)에 기록
+    // 실행 시 '2> error.log'를 붙여야 파일로 들어갑니다.
+    console.error(`[${new Date().toISOString()}] ${res.status} | ${errorMsg}`);
+  }
+
+  // 부하 조절을 위해 필요시 sleep(0.1); 주석 해제하여 사용
+  // sleep(0.1);
 }

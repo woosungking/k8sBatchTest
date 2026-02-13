@@ -9,11 +9,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.java.k8s.global.BusinessException;
+import com.java.k8s.global.RestApiResponse;
 import com.java.k8s.nobatch.dto.PointUpdateRequest;
 
 import jakarta.transaction.Transactional;
@@ -23,9 +26,13 @@ import jakarta.transaction.Transactional;
 @Component
 public class PointUpdateServiceBat implements PointUpdateService {
 
-	private final int batchSize;
 	private final BlockingQueue<PointUpdateRequest> queue;
 	private final JdbcTemplate jdbcTemplate;
+
+	@Value("${point.update.batch.size}")
+	private int batchSize;
+	@Value("${point.update.batch.delay}")
+	private int batchDelay;
 
 	// 2. 생성자에서 큐 사이즈 안전하게 초기화
 	public PointUpdateServiceBat(JdbcTemplate jdbcTemplate, @Value("${point.update.batch.size}") int batchSize) {
@@ -38,7 +45,14 @@ public class PointUpdateServiceBat implements PointUpdateService {
 	public void updateMemberPoint(PointUpdateRequest request) {
 		// 큐에 넣을 때 로그 확인 (필요시 주석 해제)
 		// System.out.println("JDBC 큐 인입: " + request.getUserId());
-		queue.offer(request);
+		boolean isAdded = queue.offer(request);
+
+		if(!isAdded){
+			throw new BusinessException(new RestApiResponse.Builder()
+				.httpStatus(HttpStatus.IM_USED)
+				.response("배치 큐 사이즈 초과!! 큐 사이즈 ==>"+ batchSize + "  배치 시간 ==>"  + batchDelay)
+				.build());
+		}
 	}
 
 	@Scheduled(fixedDelay = 100)

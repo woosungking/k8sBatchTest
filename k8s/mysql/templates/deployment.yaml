@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "mysql.fullname" . }}
+  namespace: {{ .Values.namespaceOverride | default "default" }}
   labels:
     {{- include "mysql.labels" . | nindent 4 }}
 spec:
@@ -40,4 +41,4 @@ spec:
       volumes:
         - name: mysql-config-volume
           configMap:
-            name: mysql-config
+            name: mysql-combined-config

@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql-combined-config
+  namespace: {{ .Values.namespaceOverride | default "default" }}
 data:
   # DB 설정 파일
   my.cnf: |

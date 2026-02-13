@@ -6,14 +6,14 @@ import org.springframework.http.HttpStatus;
 
 public class RestApiResponse {
 	private final HttpStatus status;
-	private Objects response;
+	private String response;
 
-	private RestApiResponse(HttpStatus status, Objects response) {
+	private RestApiResponse(HttpStatus status, String response) {
 		this.status = status;
 		this.response = response;
 	}
 
-	public Objects getResponse() {
+	public String getResponse() {
 		return response;
 	}
 
@@ -23,12 +23,12 @@ public class RestApiResponse {
 
 	public static class Builder{
 		private HttpStatus httpStatus;
-		private Objects response;
+		private String response;
 		public Builder httpStatus(HttpStatus httpStatus){
 			this.httpStatus = httpStatus;
 			return this;
 		}
-		public Builder response(Objects response){
+		public Builder response(String response){
 			this.response = response;
 			return this;
 		}

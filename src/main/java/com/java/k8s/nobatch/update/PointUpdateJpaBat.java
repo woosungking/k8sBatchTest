@@ -7,9 +7,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.java.k8s.global.BusinessException;
+import com.java.k8s.global.RestApiResponse;
 import com.java.k8s.nobatch.entity.Member;
 import com.java.k8s.nobatch.MemberRepository;
 import com.java.k8s.nobatch.dto.PointUpdateRequest;
@@ -27,6 +30,8 @@ public class PointUpdateJpaBat implements PointUpdateService{
 	private EntityManager em;
 	@Value("${point.update.batch.size}")
 	private int batchSize;
+	@Value("${point.update.batch.delay}")
+	private int batchDelay;
 
 	public PointUpdateJpaBat(MemberRepository memberRepository) {
 		this.memberRepository = memberRepository;
@@ -35,7 +40,13 @@ public class PointUpdateJpaBat implements PointUpdateService{
 	@Override
 	public void updateMemberPoint(PointUpdateRequest request) {
 		System.out.println("씨ㅏㅏㅏㅏ발");
-		queue.offer(request);
+		boolean isAdded = queue.offer(request);
+		if(!isAdded){
+			throw new BusinessException(new RestApiResponse.Builder()
+				.httpStatus(HttpStatus.IM_USED)
+				.response("배치 큐 사이즈 초과!! 큐 사이즈 ==>"+ batchSize + "  배치 시간 ==>"  + batchDelay)
+				.build());
+		}
 	}
 
 	@Scheduled(fixedDelayString = "${point.update.batch.delay}")
