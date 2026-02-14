@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: {{ include "mysql.fullname" . }}
   namespace: {{ .Values.namespaceOverride | default "default" }}
-  labels:
-    {{- include "mysql.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
@@ -13,32 +11,37 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "mysql.labels" . | nindent 8 }}
+        {{- include "mysql.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        - name: mysql
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "8.0" }}"
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: "root"
+              value: "root"      # 어플 설정에 맞춰 root로 변경
             - name: MYSQL_DATABASE
               value: "kws"
           ports:
             - name: mysql
               containerPort: 3306
-              protocol: TCP
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            # 설정 파일 주입
-            - name: mysql-config-volume
+            - name: mysql-config
               mountPath: /etc/mysql/conf.d/my.cnf
               subPath: my.cnf
-            # 초기화 스크립트 주입 (MySQL 실행 시 자동 실행됨)
-            - name: mysql-config-volume
-              mountPath: /docker-entrypoint-initdb.d/init-exporter.sql
-              subPath: init-exporter.sql
+            - name: mysql-init-scripts
+              mountPath: /docker-entrypoint-initdb.d/
       volumes:
-        - name: mysql-config-volume
+        - name: mysql-config
           configMap:
             name: mysql-combined-config
+            items:
+              - key: my.cnf
+                path: my.cnf
+        - name: mysql-init-scripts
+          configMap:
+            name: mysql-combined-config
+            items:
+              - key: 01-init-root.sql  # ConfigMap의 01-init-root.sql 데이터를
+                path: 01-init-root.sql # 컨테이너 내부 01-init-root.sql 파일로
+              - key: 02-init-db.sql    # ConfigMap의 02-init-db.sql 데이터를
+                path: 02-init-db.sql   # 컨테이너 내부 02-init-db.sql 파일로

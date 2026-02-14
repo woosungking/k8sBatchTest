@@ -4,7 +4,7 @@ metadata:
   name: mysql-combined-config
   namespace: {{ .Values.namespaceOverride | default "default" }}
 data:
-  # DB 설정 파일
+  # 1. DB 설정 파일
   my.cnf: |
     [mysqld]
     max_connections=1000
@@ -12,9 +12,17 @@ data:
     innodb_flush_log_at_trx_commit=2
     character-set-server=utf8mb4
     collation-server=utf8mb4_unicode_ci
+    skip-name-resolve
 
-  # 최초 실행 스크립트
-  init-exporter.sql: |
+  # 2. 어플용 root 계정 비밀번호 초기화 (어플 설정 root/root에 맞춤)
+  01-init-root.sql: |
+    ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+    CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'root';
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+    FLUSH PRIVILEGES;
+
+  # 3. 모니터링용 계정 (exporter/password123)
+  02-init-db.sql: |
     CREATE USER IF NOT EXISTS 'exporter'@'%' IDENTIFIED BY 'password123';
     GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'exporter'@'%';
     FLUSH PRIVILEGES;
