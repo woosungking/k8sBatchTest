@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  repository: pondix/proxysqlk8s
-  tag: 2.0.10
+  repository: proxysql/proxysql
+  tag: 2.6.3
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
