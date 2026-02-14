@@ -76,11 +76,11 @@ ingress:
 
 resources:
   limits:
-    cpu: "1.5"     # M1 Max면 1.5코어로도 MySQL 충분히 빠릅니다.
-    memory: "3Gi"  # 앱 파드들이랑 나눠 써야 하니 3GB로 협의!
+    cpu: "2"     # M1 Max면 1.5코어로도 MySQL 충분히 빠릅니다.
+    memory: "5Gi"  # 앱 파드들이랑 나눠 써야 하니 3GB로 협의!
   requests:
     cpu: "1"
-    memory: "2Gi"
+    memory: "3Gi"
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
