@@ -3,15 +3,15 @@ import { check, sleep } from 'k6';
 
 export let options = {
   stages: [
-    { duration: '10s', target: 1200 }, // 600명까지 램프업 (충분히 무거운 부하)
-    { duration: '20s', target: 1200 }, // 유지
+    { duration: '10s', target: 1000 }, // 600명까지 램프업 (충분히 무거운 부하)
+    { duration: '20s', target: 1000 }, // 유지
     { duration: '10s', target: 0 },
   ],
 };
 
 export default function () {
   // 핵심: ID 범위를 1~100으로 좁혀서 Row Lock 경합 유도!
-  const userId = Math.floor(Math.random() * 100) + 1; 
+  const userId = Math.floor(Math.random() * 10000) + 1;
   
   const url = 'http://172.16.0.202:30080/api/v1/member/point';
   const payload = JSON.stringify({ userId: userId, point: 100 });
@@ -30,4 +30,3 @@ export default function () {
 }
 
 
-//const userId = Math.floor(Math.random() * 10000) + 1;
