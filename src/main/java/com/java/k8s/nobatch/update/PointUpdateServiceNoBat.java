@@ -18,6 +18,7 @@ public class PointUpdateServiceNoBat implements PointUpdateService{
 
 	@Override
 	public void updateMemberPoint(PointUpdateRequest request) {
+		System.out.println("노배치");
 		memberRepository.findById(request.getUserId()).ifPresentOrElse(
 			member -> {
 				member.updatePoint(request.getPoint());

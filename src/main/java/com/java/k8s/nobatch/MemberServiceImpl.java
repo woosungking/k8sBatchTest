@@ -13,6 +13,8 @@ import com.java.k8s.nobatch.dto.PointUpdateRequest;
 import com.java.k8s.nobatch.entity.Member;
 import com.java.k8s.nobatch.update.PointUpdateService;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class MemberServiceImpl implements MemberService{
 	private final PointUpdateService pointUpdateService;
@@ -23,6 +25,7 @@ public class MemberServiceImpl implements MemberService{
 	}
 
 	@Override
+	@Transactional
 	public void updateMemberPoint(PointUpdateRequest request) {
 		try{
 			pointUpdateService.updateMemberPoint(request);
@@ -48,11 +51,13 @@ public class MemberServiceImpl implements MemberService{
 	}
 
 	@Override
+	@Transactional
 	public void login(LoginRequest request) {
 		Member member = memberRepository.findByPasswordAndName(request.getPassword(),request.getUserName()).orElseThrow();
 	}
 
 	@Override
+	@Transactional
 	public void showPoint(Long memberId) {
 
 	}
