@@ -66,8 +66,8 @@ collectors: {}
 
 mysql:
   db: "kws"
-  # host: "mysql.default.svc.cluster.local"
-  host: "mysql"
+  host: "mysql-app.mysql.svc.cluster.local"
+  # host: "mysql"
   additionalConfig: []
   pass: "password123"
   port: 3306
