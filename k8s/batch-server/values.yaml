@@ -1,5 +1,5 @@
 
-replicaCount: 20
+replicaCount: 10
 
 image:
   repository: kingmusung/batchtestapp
