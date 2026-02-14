@@ -4,7 +4,7 @@ replicaCount: 1
 image:
   repository: kingmusung/batchtestapp
   pullPolicy: Always
-  tag: "latest"
+  tag: "latestt"
 
 
 nameOverride: ""
