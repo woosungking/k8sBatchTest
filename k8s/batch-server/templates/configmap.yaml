@@ -26,5 +26,5 @@ data:
   #no-batch
   #batch-jpa
   # batch-jdbc
-  POINT_UPDATE_BATCH_SIZE: "100"
+  POINT_UPDATE_BATCH_SIZE: "10"
   POINT_UPDATE_BATCH_DELAY: "1000"
