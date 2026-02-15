@@ -65,7 +65,7 @@ public class PointUpdateServiceBat implements PointUpdateService {
 
 		System.out.println("로그: JDBC 배치 처리 시작! 데이터 개수: " + batchList.size());
 
-		jdbcTemplate.batchUpdate("UPDATE member SET point = point + ? WHERE id = ?",
+		jdbcTemplate.batchUpdate("UPDATE members SET point = point + ? WHERE id = ?",
 			new BatchPreparedStatementSetter() {
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
