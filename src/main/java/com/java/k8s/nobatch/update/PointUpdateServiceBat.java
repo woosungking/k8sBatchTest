@@ -3,6 +3,7 @@ package com.java.k8s.nobatch.update;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -38,7 +39,7 @@ public class PointUpdateServiceBat implements PointUpdateService {
 	public PointUpdateServiceBat(JdbcTemplate jdbcTemplate, @Value("${point.update.batch.size}") int batchSize) {
 		this.jdbcTemplate = jdbcTemplate;
 		this.batchSize = batchSize;
-		this.queue = new LinkedBlockingQueue<>(batchSize * 10);
+		this.queue = new LinkedBlockingQueue<>(batchSize * 10000);
 	}
 
 	@Override
@@ -56,13 +57,12 @@ public class PointUpdateServiceBat implements PointUpdateService {
 	}
 
 	@Scheduled(fixedDelay = 100)
-	@Transactional
 	public void processBatch() {
 		if (queue.isEmpty()) return;
 
 		List<PointUpdateRequest> batchList = new ArrayList<>();
 		queue.drainTo(batchList, batchSize);
-
+		batchList.sort(Comparator.comparingLong(PointUpdateRequest::getUserId));
 		System.out.println("로그: JDBC 배치 처리 시작! 데이터 개수: " + batchList.size());
 
 		jdbcTemplate.batchUpdate("UPDATE members SET point = point + ? WHERE id = ?",

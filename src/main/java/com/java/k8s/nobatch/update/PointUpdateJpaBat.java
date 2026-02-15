@@ -50,7 +50,6 @@ public class PointUpdateJpaBat implements PointUpdateService{
 	}
 
 	@Scheduled(fixedDelayString = "${point.update.batch.delay}")
-	@Transactional
 	public void processBatch(){
 		if(queue.isEmpty()) return;
 
