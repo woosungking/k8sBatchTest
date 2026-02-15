@@ -20,8 +20,8 @@ data:
   SPRING_DATASOURCE_HIKARI_MAX_LIFETIME: "1800000"
   
   # 형님 앱 전용 커스텀 배치 전략 설정
-  POINT_UPDATE_STRATEGY: "no-batch"
-  # POINT_UPDATE_STRATEGY: "batch-jpa"
+  # POINT_UPDATE_STRATEGY: "no-batch"
+  POINT_UPDATE_STRATEGY: "batch-jpa"
   #no-batch
   #batch-jpa
   # batch-jdbc
