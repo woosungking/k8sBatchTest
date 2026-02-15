@@ -4,7 +4,8 @@ metadata:
   name: {{ include "batch-server.fullname" . }}
 data:
   # DB 기본 설정
-  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-app.mysql.svc.cluster.local:3306/kws?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&rewriteBatchedStatements=true"
+  #SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-app.mysql.svc.cluster.local:3306/kws?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&rewriteBatchedStatements=true"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-proxy-app-proxysql.mysql.svc.cluster.local:6033/kws?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&rewriteBatchedStatements=true"
   SPRING_DATASOURCE_USERNAME: "root"
   SPRING_DATASOURCE_PASSWORD: "root"
   
