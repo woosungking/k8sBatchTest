@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: proxysql/proxysql
-  tag: 2.6.3
+  tag: 3.0.5
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
