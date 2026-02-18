@@ -21,8 +21,8 @@ data:
   
   # 형님 앱 전용 커스텀 배치 전략 설정
   # POINT_UPDATE_STRATEGY: "no-batch"
-  # POINT_UPDATE_STRATEGY: "batch-jpa"
-  POINT_UPDATE_STRATEGY: "batch-jdbc"
+  POINT_UPDATE_STRATEGY: "batch-jpa"
+  # POINT_UPDATE_STRATEGY: "batch-jdbc"
   #no-batch
   #batch-jpa
   # batch-jdbc
