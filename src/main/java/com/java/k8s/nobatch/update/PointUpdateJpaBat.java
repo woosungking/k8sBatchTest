@@ -32,7 +32,7 @@ public class PointUpdateJpaBat implements PointUpdateService{
 	private int batchSize;
 	@Value("${point.update.batch.delay}")
 	private int batchDelay;
-	private final BlockingQueue<PointUpdateRequest> queue = new LinkedBlockingQueue<>(batchSize*10000);
+	private final BlockingQueue<PointUpdateRequest> queue = new LinkedBlockingQueue<>(10000000);
 
 	public PointUpdateJpaBat(MemberRepository memberRepository) {
 		this.memberRepository = memberRepository;
