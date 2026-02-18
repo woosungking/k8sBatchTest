@@ -55,7 +55,7 @@ public class PointUpdateServiceBat implements PointUpdateService {
 				.build());
 		}
 	}
-
+	@Transactional
 	@Scheduled(fixedDelay = 100)
 	public void processBatch() {
 		if (queue.isEmpty()) return;
