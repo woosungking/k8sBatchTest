@@ -4,7 +4,7 @@ replicaCount: 5
 image:
   repository: kingmusung/batchtestapp
   pullPolicy: Always
-  tag: "latesttttt"
+  tag: "latestttttt"
 
 
 nameOverride: ""
@@ -30,8 +30,8 @@ service:
 
 resources:
   limits:
-    cpu: "600m"     # 0.6코어 (파드당 엔진 출력을 높임)
-    memory: "640Mi" # 640MB (자바 힙을 더 넉넉히 줄 수 있음)
+    cpu: "600m"     
+    memory: "640Mi" 
   requests:
     cpu: "300m"
     memory: "384Mi"

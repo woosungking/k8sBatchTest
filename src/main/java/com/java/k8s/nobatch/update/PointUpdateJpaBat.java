@@ -24,7 +24,7 @@ import jakarta.transaction.Transactional;
 @ConditionalOnProperty(name = "point.update.strategy", havingValue = "batch-jpa")
 @Component
 public class PointUpdateJpaBat implements PointUpdateService{
-	private final BlockingQueue<PointUpdateRequest> queue = new LinkedBlockingQueue<>(10000);
+
 	private final MemberRepository memberRepository;
 	@PersistenceContext
 	private EntityManager em;
@@ -32,6 +32,7 @@ public class PointUpdateJpaBat implements PointUpdateService{
 	private int batchSize;
 	@Value("${point.update.batch.delay}")
 	private int batchDelay;
+	private final BlockingQueue<PointUpdateRequest> queue = new LinkedBlockingQueue<>(batchSize*10000);
 
 	public PointUpdateJpaBat(MemberRepository memberRepository) {
 		this.memberRepository = memberRepository;

@@ -3,8 +3,8 @@ import { check, sleep } from 'k6';
 
 export let options = {
   stages: [
-    { duration: '10s', target: 4000 }, // 600명까지 램프업 (충분히 무거운 부하)
-    { duration: '20s', target: 4000 }, // 유지
+    { duration: '10s', target: 2000 }, // 600명까지 램프업 (충분히 무거운 부하)
+    { duration: '20s', target: 2000 }, // 유지
     { duration: '10s', target: 0 },
   ],
 };
